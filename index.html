@@ -2,145 +2,129 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Valentine 💌</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>San Valentín 💘</title>
 
 <style>
-*{ box-sizing:border-box; }
-
 body{
-    margin:0;
-    font-family: system-ui, -apple-system, sans-serif;
-    background:#f9fafb;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#f5f5f5;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
 
 .card{
-    background:white;
-    padding:40px;
-    width:100%;
-    max-width:420px;
-    border-radius:16px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.08);
-    text-align:center;
+  background:white;
+  padding:40px;
+  border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.1);
+  text-align:center;
+  max-width:400px;
+  width:90%;
 }
 
 h1{
-    margin-bottom:10px;
-    font-size:24px;
-}
-
-p{
-    color:#666;
-    font-size:14px;
-    margin-bottom:25px;
-}
-
-input{
-    width:100%;
-    padding:12px;
-    margin-bottom:15px;
-    border:1px solid #e5e7eb;
-    border-radius:8px;
-    font-size:14px;
+  margin-bottom:10px;
 }
 
 button{
-    width:100%;
-    padding:12px;
-    background:#ff4d6d;
-    color:white;
-    border:none;
-    border-radius:8px;
-    font-size:15px;
-    cursor:pointer;
-    transition:.2s;
+  background:#ff4d6d;
+  border:none;
+  color:white;
+  padding:12px 20px;
+  border-radius:10px;
+  cursor:pointer;
+  margin-top:15px;
+  font-size:16px;
 }
 
-button:hover{
-    background:#ff2e63;
+input{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border-radius:8px;
+  border:1px solid #ddd;
 }
 
-.link-box{
-    margin-top:20px;
-    background:#f3f4f6;
-    padding:10px;
-    border-radius:8px;
-    font-size:13px;
-    word-break:break-all;
+.hearts{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  overflow:hidden;
+}
+
+.heart{
+  position:absolute;
+  color:#ff4d6d;
+  font-size:20px;
+  animation:float 6s linear infinite;
+}
+
+@keyframes float{
+  from{transform:translateY(100vh);}
+  to{transform:translateY(-10vh);}
 }
 </style>
 </head>
-
 <body>
 
-<div class="card" id="card">
-
-    <div id="formSection">
-        <h1>Genera tu Valentine 💘</h1>
-        <p>Crea un enlace personalizado para compartir.</p>
-
-        <input type="text" id="from" placeholder="De (tu nombre)">
-        <input type="text" id="to" placeholder="Para (nombre de tu Valentine)">
-
-        <button onclick="generate()">Crear Valentine</button>
-    </div>
-
-    <div id="resultSection" style="display:none;">
-        <h1 id="title"></h1>
-        <p id="message"></p>
-        <div class="link-box" id="linkBox"></div>
-        <button onclick="copyLink()">Copiar enlace</button>
-    </div>
-
-</div>
+<div id="app"></div>
+<div class="hearts" id="hearts"></div>
 
 <script>
-
-// Detectar si hay parámetros en la URL
 const params = new URLSearchParams(window.location.search);
-const fromParam = params.get("from");
-const toParam = params.get("to");
+const from = params.get("from");
+const to = params.get("to");
 
-if(fromParam && toParam){
-    showResult(fromParam, toParam);
+const app = document.getElementById("app");
+
+if(from && to){
+  app.innerHTML = `
+    <div class="card">
+      <h1>Para ${to} ❤️</h1>
+      <p>Con mucho cariño,</p>
+      <h2>${from} 💌</h2>
+      <p>¿Aceptas ser mi San Valentín? 💘</p>
+    </div>
+  `;
+
+  // corazones flotando
+  setInterval(()=>{
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.style.left = Math.random()*100+"%";
+    heart.innerHTML="❤️";
+    document.getElementById("hearts").appendChild(heart);
+    setTimeout(()=>heart.remove(),6000);
+  },300);
+
+}else{
+  app.innerHTML = `
+    <div class="card">
+      <h1>Crear enlace 💘</h1>
+      <input id="fromInput" placeholder="Tu nombre">
+      <input id="toInput" placeholder="Nombre de la persona">
+      <button onclick="generate()">Generar enlace</button>
+    </div>
+  `;
 }
 
-// Generar enlace
 function generate(){
-    const from = document.getElementById("from").value.trim();
-    const to = document.getElementById("to").value.trim();
+  const fromVal = document.getElementById("fromInput").value;
+  const toVal = document.getElementById("toInput").value;
 
-    if(!from || !to){
-        alert("Completa ambos campos");
-        return;
-    }
+  const link = window.location.origin + window.location.pathname + 
+  "?from="+encodeURIComponent(fromVal)+"&to="+encodeURIComponent(toVal);
 
-    showResult(from, to);
+  navigator.clipboard.writeText(link);
+  alert("Enlace copiado 💘");
 }
-
-// Mostrar resultado
-function showResult(from, to){
-
-    document.getElementById("formSection").style.display="none";
-    document.getElementById("resultSection").style.display="block";
-
-    document.getElementById("title").innerHTML=`Para ${to} ❤️`;
-    document.getElementById("message").innerHTML=`Con mucho cariño,<br>${from} 💌`;
-
-    const link = `${window.location.origin}${window.location.pathname}?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
-    document.getElementById("linkBox").innerText = link;
-}
-
-// Copiar enlace
-function copyLink(){
-    const text = document.getElementById("linkBox").innerText;
-    navigator.clipboard.writeText(text);
-    alert("Enlace copiado 💘");
-}
-
 </script>
 
 </body>
