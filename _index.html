@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>San Valentín 💘</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#ffe6eb;
+  overflow:hidden;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.card{
+  background:white;
+  padding:40px;
+  border-radius:20px;
+  box-shadow:0 15px 40px rgba(0,0,0,0.15);
+  text-align:center;
+  position:relative;
+  z-index:2;
+}
+
+button{
+  border:none;
+  padding:12px 25px;
+  margin:10px;
+  font-size:18px;
+  border-radius:12px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+#yesBtn{
+  background:#ff4d6d;
+  color:white;
+}
+
+#noBtn{
+  background:#ccc;
+  position:absolute;
+}
+
+.hearts{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:1;
+}
+
+.heart{
+  position:absolute;
+  font-size:20px;
+  animation:float 5s linear forwards;
+}
+
+@keyframes float{
+  from{transform:translateY(100vh);opacity:1;}
+  to{transform:translateY(-10vh);opacity:0;}
+}
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+<div class="hearts" id="hearts"></div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const from = params.get("from");
+const to = params.get("to");
+
+const app = document.getElementById("app");
+
+if(from && to){
+  app.innerHTML = `
+    <div class="card">
+      <h1>Para ${to} ❤️</h1>
+      <p>Con mucho cariño,</p>
+      <h2>${from} 💌</h2>
+      <p>¿Aceptas ser mi San Valentín? 💘</p>
+      <div style="margin-top:20px; position:relative; height:80px;">
+        <button id="yesBtn" onclick="accept()">💖 Sí</button>
+        <button id="noBtn" onmouseover="moveNo()">💔 No</button>
+      </div>
+    </div>
+  `;
+}else{
+  app.innerHTML = `
+    <div class="card">
+      <h1>Crear enlace 💘</h1>
+      <input id="fromInput" placeholder="Tu nombre"><br>
+      <input id="toInput" placeholder="Nombre de la persona"><br>
+      <button onclick="generate()">Generar enlace</button>
+    </div>
+  `;
+}
+
+function generate(){
+  const fromVal = document.getElementById("fromInput").value;
+  const toVal = document.getElementById("toInput").value;
+  const link = window.location.origin + window.location.pathname +
+  "?from="+encodeURIComponent(fromVal)+"&to="+encodeURIComponent(toVal);
+  navigator.clipboard.writeText(link);
+  alert("Enlace copiado 💘");
+}
+
+let scale = 1;
+
+function moveNo(){
+  const noBtn = document.getElementById("noBtn");
+  const yesBtn = document.getElementById("yesBtn");
+
+  const maxX = window.innerWidth - 100;
+  const maxY = window.innerHeight - 50;
+
+  noBtn.style.position = "fixed";
+  noBtn.style.left = Math.random() * maxX + "px";
+  noBtn.style.top = Math.random() * maxY + "px";
+
+  scale += 0.2;
+  yesBtn.style.transform = "scale(" + scale + ")";
+}
+
+function accept(){
+  document.querySelector(".card").innerHTML = `
+    <h1>Sabía que dirías que sí 😍</h1>
+    <h2>Te amo mucho 💖</h2>
+  `;
+
+  setInterval(()=>{
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
+    heart.style.left = Math.random()*100+"%";
+    heart.innerHTML="💖";
+    document.getElementById("hearts").appendChild(heart);
+    setTimeout(()=>heart.remove(),5000);
+  },150);
+}
+</script>
+
+</body>
+</html>
