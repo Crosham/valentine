@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Valentine 💌</title>
+
+<style>
+*{ box-sizing:border-box; }
+
+body{
+    margin:0;
+    font-family: system-ui, -apple-system, sans-serif;
+    background:#f9fafb;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.card{
+    background:white;
+    padding:40px;
+    width:100%;
+    max-width:420px;
+    border-radius:16px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.08);
+    text-align:center;
+}
+
+h1{
+    margin-bottom:10px;
+    font-size:24px;
+}
+
+p{
+    color:#666;
+    font-size:14px;
+    margin-bottom:25px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border:1px solid #e5e7eb;
+    border-radius:8px;
+    font-size:14px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    background:#ff4d6d;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-size:15px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+button:hover{
+    background:#ff2e63;
+}
+
+.link-box{
+    margin-top:20px;
+    background:#f3f4f6;
+    padding:10px;
+    border-radius:8px;
+    font-size:13px;
+    word-break:break-all;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card" id="card">
+
+    <div id="formSection">
+        <h1>Genera tu Valentine 💘</h1>
+        <p>Crea un enlace personalizado para compartir.</p>
+
+        <input type="text" id="from" placeholder="De (tu nombre)">
+        <input type="text" id="to" placeholder="Para (nombre de tu Valentine)">
+
+        <button onclick="generate()">Crear Valentine</button>
+    </div>
+
+    <div id="resultSection" style="display:none;">
+        <h1 id="title"></h1>
+        <p id="message"></p>
+        <div class="link-box" id="linkBox"></div>
+        <button onclick="copyLink()">Copiar enlace</button>
+    </div>
+
+</div>
+
+<script>
+
+// Detectar si hay parámetros en la URL
+const params = new URLSearchParams(window.location.search);
+const fromParam = params.get("from");
+const toParam = params.get("to");
+
+if(fromParam && toParam){
+    showResult(fromParam, toParam);
+}
+
+// Generar enlace
+function generate(){
+    const from = document.getElementById("from").value.trim();
+    const to = document.getElementById("to").value.trim();
+
+    if(!from || !to){
+        alert("Completa ambos campos");
+        return;
+    }
+
+    showResult(from, to);
+}
+
+// Mostrar resultado
+function showResult(from, to){
+
+    document.getElementById("formSection").style.display="none";
+    document.getElementById("resultSection").style.display="block";
+
+    document.getElementById("title").innerHTML=`Para ${to} ❤️`;
+    document.getElementById("message").innerHTML=`Con mucho cariño,<br>${from} 💌`;
+
+    const link = `${window.location.origin}${window.location.pathname}?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+    document.getElementById("linkBox").innerText = link;
+}
+
+// Copiar enlace
+function copyLink(){
+    const text = document.getElementById("linkBox").innerText;
+    navigator.clipboard.writeText(text);
+    alert("Enlace copiado 💘");
+}
+
+</script>
+
+</body>
+</html>
